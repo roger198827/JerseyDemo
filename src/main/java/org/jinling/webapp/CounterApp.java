@@ -39,10 +39,17 @@ public class CounterApp {
     @POST
     @Path("/{param}")
     public Response updateCounter(@PathParam("param") String namedCounter) {
-        int count = allCounters.containsKey(namedCounter) ? allCounters.get(namedCounter) : 0;
-        allCounters.put(namedCounter, count + 1);
-        Response.ResponseBuilder response = Response.ok();
-        return response.build();
+
+        try{
+            int count = allCounters.containsKey(namedCounter) ? allCounters.get(namedCounter) : 0;
+            allCounters.put(namedCounter, count + 1);
+            Response.ResponseBuilder response = Response.ok();
+            return response.build();
+        }catch (Exception e) {
+            Response.ResponseBuilder response = Response.serverError();
+            return response.build();
+        }
+
     }
 
     // delete a specific counter
@@ -50,7 +57,12 @@ public class CounterApp {
     @Path("/{param}")
     public Response deleteSpecificCounter(@PathParam("param") String namedCounter) {
         if (allCounters.containsKey(namedCounter)){
-            allCounters.remove(namedCounter);
+            try{
+                allCounters.remove(namedCounter);
+            }catch (Exception e) {
+                Response.ResponseBuilder response = Response.serverError();
+                return response.build();
+            }
             Response.ResponseBuilder response = Response.ok();
             return response.build();
         }
@@ -63,9 +75,15 @@ public class CounterApp {
     // delete all counters
     @DELETE
     public Response deleteCounters() {
-        allCounters.clear();
-        Response.ResponseBuilder response = Response.ok();
-        return response.build();
+        try {
+            allCounters.clear();
+            Response.ResponseBuilder response = Response.ok();
+            return response.build();
+        }catch (Exception e) {
+            Response.ResponseBuilder response = Response.serverError();
+            return response.build();
+        }
+
     }
 
 }
